@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.config.settings import settings
 from app.utils.logger import get_logger
 from app.models.api_response import APIResponse
+from app.api.routes import router
 
 logger = get_logger(__name__)
 logger.info("API Starting...")
@@ -15,20 +16,9 @@ app = FastAPI(
 
 app.state.environment = settings.app_environment
 
+app.include_router(router)
 
-@app.get("/")
-async def home():
-    logger.info("Home Endpoint Called.")
-    return APIResponse(
-        success = True,
-        message = "Welcome to AI Evaluation Studio",
-        data = {
-            "app_name" : settings.app_name,
-            "app_version" : settings.app_version,
-            "app_environment" : settings.app_environment
-        },
-        version = settings.app_version
-    )
+
 
 
 
