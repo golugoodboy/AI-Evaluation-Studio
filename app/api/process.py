@@ -19,13 +19,14 @@ def process_document(document_id: str):
         return APIResponse(success=False, message="Document not found", data=None)
 
     try:
-        text = PDFService.extract_text(filepath)
+        extracted_data = PDFService.extract_text(filepath)
+        text = extracted_data["text"]
         if not text:
             logger.warning(f"No text extracted from {document_id}.")
             return APIResponse(success=False, message="Document is empty or corrupted or may contain images or tables.", data=None)
         
         logger.info(f"Successfully extracted text from {document_id}")
-        return APIResponse(success=True, message="Document processed successfully", data={"document_id": document_id, "text_preview": text[:100] + "..." if len(text) > 100 else text, "page_count": len(text.split("\n\n"))})
+        return APIResponse(success=True, message="Document processed successfully", data={"document_id": document_id, "text_preview": text[:100] + "..." if len(text) > 100 else text, "page_count": extracted_data["page_count"]})
     except PDFProcessingError as e:
         logger.exception(f"Error processing document {document_id}")
         return APIResponse(success=False, message="Failed to process the file.", data=None)

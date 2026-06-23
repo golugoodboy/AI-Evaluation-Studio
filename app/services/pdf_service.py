@@ -10,7 +10,7 @@ class PDFService:
     Service Responsible for reading PDF documents and extracting text.
     """
     @staticmethod
-    def extract_text(file_path: Path) -> str:
+    def extract_text(file_path: Path) -> dict:
         logger.info(f"Extracting text from PDF : {file_path.name}")
         try:
             document_text = []
@@ -21,7 +21,12 @@ class PDFService:
             final_text = "\n\n".join(document_text).strip()
             if not final_text:
                 logger.warning(f"No text could be extracted from the {file_path.name}.It might be scanned images or protected.")
-            return final_text
+            return {
+                "text": final_text,
+                "page_count": len(document_text),
+                "word_count": len(final_text.split()),
+                "character_count": len(final_text),
+            }
         except Exception as e:
             logger.exception(f"Error extracting text from : {file_path.name}")
             raise PDFProcessingError(f"Failed to process PDF : {file_path.name}") from e
