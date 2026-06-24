@@ -11,3 +11,9 @@ class ChunkProcessingError(Exception):
 class EmbeddingProcessingError(Exception):
     """Custom exception for Embedding errors."""
     pass
+
+
+class RetrieveProcessingError(Exception):
+    """Customer exception for Retriever error."""
+    pass
+
