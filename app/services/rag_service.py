@@ -4,6 +4,7 @@ from app.services.llm.llm_service import LLMService
 from app.services.retriever_services import RetrieverService
 from typing import List, Dict, Any
 from app.exceptions.pdf_exception import RetrieveProcessingError,LLMProcessingError,RAGProcessingError
+from prompt.rag_prompt import RAGPrompt
 
 
 logger = get_logger(__name__)
@@ -20,7 +21,7 @@ class RAGService:
             query_embedding = self._embedding_service.generate(query)
             retrieved_chunks = self._retriever_service.retrieve(query_embedding, chunks, top_k)
             rag_context = "\n\n".join([chunk["text"] for chunk in retrieved_chunks])
-            prompt = f"Context: {rag_context}\n\nQuery: {query}\n\nAnswer:"
+            prompt = RAGPrompt.build(query, retrieved_chunks)
             response = self._llm_service.generate(prompt)
             return {
                 "query": query,
@@ -28,9 +29,12 @@ class RAGService:
                 "rag_context": rag_context,
                 "response": response,
                 "retrieval_count" : len(retrieved_chunks),
-                "top_score" : retrieved_chunks[0]["score"]
+                "top_score" : retrieved_chunks[0]["score"],
+                "prompt_version": RAGPrompt.PROMPT_VERSION
             }
         except Exception as e:
             logger.exception("Error processing query")
             raise RAGProcessingError("Failed to process query") from e
+
+
 
