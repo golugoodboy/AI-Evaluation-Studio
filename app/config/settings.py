@@ -23,6 +23,9 @@ class Settings:
         self.app_name = os.getenv("APP_NAME")
         self.app_version = os.getenv("APP_VERSION")
         self.app_environment = os.getenv("ENVIRONMENT")
+        self.huggingface_api_key = os.getenv("HUGGINGFACE_API_KEY")
+        self.huggingface_model = os.getenv("HUGGINGFACE_MODEL")
+
 
 
 settings = Settings()

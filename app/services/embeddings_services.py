@@ -34,9 +34,18 @@ class EmbeddingsService:
         except Exception as e:
             logger.exception("Error creating embeddings for chunks")
             raise EmbeddingProcessingError("Failed to create embeddings for chunks") from e
+    
+    def generate(self, query : str) -> list[float]:
+        logger.info(f"Generating embedding for query: {query}")
+        try:
+            embedding = self._model.encode([query])[0]
+            logger.info(f"Successfully generated embedding for query: {query}")
+            return embedding.tolist()
+        except Exception as e:
+            logger.exception("Error generating embedding for query")
+            raise EmbeddingProcessingError("Failed to generate embedding for query") from e
 
 
 embeddings_service_instance = EmbeddingsService()
-
 
 

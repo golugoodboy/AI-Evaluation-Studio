@@ -17,3 +17,7 @@ class RetrieveProcessingError(Exception):
     """Customer exception for Retriever error."""
     pass
 
+
+class RAGProcessingError(Exception):
+    """Custom exception for RAG processing errors."""
+    pass
