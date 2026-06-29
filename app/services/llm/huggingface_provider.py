@@ -26,27 +26,34 @@ class HuggingFaceProvider(BaseLLMProvider):
         logger.info("Sending request to Hugging Face.")
         start = time.perf_counter()
         try:
-            response = self._client.text_generation(
-                prompt = prompt,
+            response = self._client.chat_completion(
+                messages = [{"role": "user", "content": prompt}],
                 model = self._model_name,
-                max_new_tokens = 512,
-                temperature = 0.5,
-                repetition_penalty = 1.1
+                max_tokens = 512,
+                temperature = 0.5
             )
+            
+            output_text = response.choices[0].message.content
             latency = round((time.perf_counter() - start) * 1000, 2)
             logger.info(f"Successfully received response from Hugging Face provider in {latency} ms")
+            
+            prompt_tokens = response.usage.prompt_tokens if hasattr(response, 'usage') and response.usage else 0
+            completion_tokens = response.usage.completion_tokens if hasattr(response, 'usage') and response.usage else 0
+            total_tokens = response.usage.total_tokens if hasattr(response, 'usage') and response.usage else 0
+            finish_reason = response.choices[0].finish_reason if len(response.choices) > 0 else None
+
             return {
-                "text" : response,
+                "text" : output_text,
                 "latency_ms" : latency,
                 "model" : self._model_name,
                 "provider" : "HuggingFace",
-                "tokens_used" : 0,
+                "tokens_used" : total_tokens,
                 "usage":{
-                    "prompt_tokens" : 0,
-                    "response_tokens" : 0,
-                    "total_tokens" : 0
+                    "prompt_tokens" : prompt_tokens,
+                    "response_tokens" : completion_tokens,
+                    "total_tokens" : total_tokens
                 },
-                "finish_reason": None
+                "finish_reason": finish_reason
             }
         except Exception as e:
             logger.exception("Error generating response from HuggingFace provider")

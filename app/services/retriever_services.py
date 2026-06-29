@@ -1,7 +1,7 @@
 from app.utils.logger import get_logger
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-from app.exceptions.pdf_exception import RetrieveProcessingError
+from app.exceptions.pdf_exception import RetrieverProcessingError
 from typing import List, Dict, Any
 
 logger = get_logger(__name__)
@@ -24,8 +24,4 @@ class RetrieverService:
             return result
         except Exception as e:
             logger.exception("Error retrieving chunks")
-            raise RetrieveProcessingError("Failed to retrieve chunks") from e
-
-
-
-
+            raise RetrieverProcessingError("Failed to retrieve chunks") from e

@@ -9,5 +9,9 @@ class APIResponse(BaseModel):
     version : str = settings.app_version
 
 
+class RAGRequest(BaseModel):
+    document_id : str
+    query : str
+
 
 
