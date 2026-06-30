@@ -6,15 +6,17 @@ from app.services.embeddings_services import EmbeddingsService
 from app.utils.logger import get_logger
 from app.services.document_storage_service import DocumentStorageService
 from pathlib import Path
+from app.services.vector_store.chromDBservice import ChromaDBService
 
 logger = get_logger(__name__)
 
 class DocumentProcessor:
-    def __init__(self, pdf_service: PDFService, chunk_service: ChunkService, embedding_service: EmbeddingsService, storage_service: DocumentStorageService):
+    def __init__(self, pdf_service: PDFService, chunk_service: ChunkService, embedding_service: EmbeddingsService, storage_service: DocumentStorageService, chromadb_service : ChromaDBService):
         self._pdf_service = pdf_service
         self._chunk_service = chunk_service
         self._embedding_service = embedding_service
         self._storage_service = storage_service
+        self._chromadb_service = chromadb_service
 
     def process_document(self, pdf_path: Path, document_id: str = None) -> Dict[str, Any]:
         logger.info(f"Processing PDF located at {pdf_path}")
@@ -36,14 +38,18 @@ class DocumentProcessor:
                     "title": pdf_path.name,
                     "page_count": extracted_data["page_count"],
                     "content": text,
-                    "chunks": chunks,
-                    "embeddings_chunks": embeddings_chunks,
+                    "chunks": chunks
                 }
         )
+        self._chromadb_service.add_document(document_id, embeddings_chunks)
         logger.info("PDF processed successfully")
         return {
             "document_id": document_id,
             "chunk_count": len(embeddings_chunks)
         }
+
+
+
+
 
 

@@ -22,7 +22,7 @@ class PDFService:
             if not final_text:
                 logger.warning(f"No text could be extracted from the {file_path.name}.It might be scanned images or protected.")
             return {
-                "text": final_text,
+                "pages" : [{"page_number" : (index + 1),"text":text} for index,text in enumerate(document_text)],
                 "page_count": len(document_text),
                 "word_count": len(final_text.split()),
                 "character_count": len(final_text),
@@ -30,6 +30,9 @@ class PDFService:
         except Exception as e:
             logger.exception(f"Error extracting text from : {file_path.name}")
             raise PDFProcessingError(f"Failed to process PDF : {file_path.name}") from e
+
+
+
 
 
 
