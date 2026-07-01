@@ -25,7 +25,11 @@ class Settings:
         self.app_environment = os.getenv("ENVIRONMENT")
         self.huggingface_api_key = os.getenv("HUGGINGFACE_API_KEY")
         self.huggingface_model = os.getenv("HUGGINGFACE_MODEL")
-        self.rag_threshold = float(os.getenv("RAG_THRESHOLD"))
+        self.rag_threshold = os.getenv("RETRIEVAL_CONFIDENCE_THRESHOLD")
+        if self.rag_threshold is not None:
+            self.rag_threshold = float(self.rag_threshold)
+        else:
+            self.rag_threshold = 0.0
 
 
 settings = Settings()

@@ -1,4 +1,4 @@
-from utils.logger import get_logger
+from app.utils.logger import get_logger
 from typing import List, Dict
 from app.services.vector_store.chromDBservice import ChromaDBService
 
@@ -19,7 +19,7 @@ class RetrieverDBService:
             retrieved_chunks = [
                 {
                     "text": retrieved_chunks["documents"][0][i],
-                    "embedding" : retrieved_chunks["embeddings"][0][i],
+                    #"embedding" : retrieved_chunks["embeddings"][0][i],
                     "metadata" : retrieved_chunks["metadatas"][0][i],
                     "id" : retrieved_chunks["ids"][0][i],
                     "distance" : retrieved_chunks["distances"][0][i],

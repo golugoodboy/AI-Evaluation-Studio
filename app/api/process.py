@@ -20,7 +20,7 @@ def process_document(document_id: str):
 
     try:
         extracted_data = PDFService.extract_text(filepath)
-        text = extracted_data["text"]
+        text = "\n\n".join([page["text"] for page in extracted_data["pages"]])
         if not text:
             logger.warning(f"No text extracted from {document_id}.")
             return APIResponse(success=False, message="Document is empty or corrupted or may contain images or tables.", data=None)

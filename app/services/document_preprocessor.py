@@ -28,7 +28,7 @@ class DocumentProcessor:
             document_id = str(uuid4())
 
         extracted_data = self._pdf_service.extract_text(pdf_path)
-        text = extracted_data["text"]
+        text = "\n\n".join([page["text"] for page in extracted_data["pages"]])
         chunks = self._chunk_service.create_chunks(text)
         embeddings_chunks = self._embedding_service.embed_chunks(chunks)
         self._storage_service.save_document(

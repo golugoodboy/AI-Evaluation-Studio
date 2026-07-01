@@ -10,6 +10,8 @@ from app.services.chunk_service import ChunkService
 from app.services.embeddings_services import EmbeddingsService
 from app.services.document_storage_service import DocumentStorageService
 from app.services.document_preprocessor import DocumentProcessor
+from app.services.vector_store.chromDBservice import ChromaDBService
+import chromadb
 
 logger = get_logger(__name__)
 
@@ -51,7 +53,9 @@ async def upload_document(file: UploadFile = File(...)):
         chunk_service = ChunkService()
         embedding_service = EmbeddingsService()
         storage_service = DocumentStorageService()
-        processor = DocumentProcessor(pdf_service, chunk_service, embedding_service, storage_service)
+        client = chromadb.PersistentClient(path=settings.base_dir / "data" / "chromadb")
+        chromadb_service = ChromaDBService(client)
+        processor = DocumentProcessor(pdf_service, chunk_service, embedding_service, storage_service,chromadb_service)
         processor.process_document(filepath, document_id=document_id)
 
         return APIResponse(
@@ -68,3 +72,4 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         logger.exception("Error uploading or processing document")
         return APIResponse(success=False, message="Failed to upload document", data=None)
+

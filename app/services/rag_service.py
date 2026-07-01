@@ -1,8 +1,6 @@
 from app.utils.logger import get_logger
 from app.services.embeddings_services import EmbeddingsService
-#from app.services.document_storage_service import DocumentStorageService
 from app.services.llm.llm_service import LLMService
-#from app.services.retriever_services import RetrieverService
 from typing import Dict, Any
 from app.exceptions.pdf_exception import RAGProcessingError
 from prompt.rag_prompt import RAGPrompt
@@ -27,7 +25,7 @@ class RAGService:
             query_embedding = self._embedding_service.generate(query)
             #retrieved_chunks = self._retriever_service.retrieve(query_embedding, document["embeddings_chunks"], top_k)
             retrieved_chunks = self._retriever_service.retrieve_chunks(query_embedding, top_k)
-            top_score = retrieved_chunks[0]["score"] if retrieved_chunks else 0
+            top_score = retrieved_chunks[0]["distance"] if retrieved_chunks else 0
             threshold = settings.rag_threshold
             if top_score < threshold:
                 logger.warning(f"Top score {top_score} is below threshold {threshold}")
@@ -37,7 +35,7 @@ class RAGService:
                     "rag_context": "I couldn't find the answer in the provided document.",
                     "response": "I couldn't find the answer in the provided document.",
                     "retrieval_count" : len(retrieved_chunks),
-                    "top_score" : (retrieved_chunks[0]["score"]) if retrieved_chunks else None,
+                    "distance" : (retrieved_chunks[0]["distance"]) if retrieved_chunks else None,
                 }
             rag_context = "\n\n".join([chunk["text"] for chunk in retrieved_chunks])
             prompt = RAGPrompt.build(query, rag_context)
@@ -48,11 +46,11 @@ class RAGService:
                 "rag_context": rag_context,
                 "response": response,
                 "retrieval_count" : len(retrieved_chunks),
-                "top_score" : (retrieved_chunks[0]["score"]) if retrieved_chunks else None,
+                "top_score" : (retrieved_chunks[0]["distance"]) if retrieved_chunks else None,
                 "prompt_version": RAGPrompt.PROMPT_VERSION
             }
         except Exception as e:
             logger.exception("Error processing query")
-            raise RAGProcessingError("Failed to process query") from e
+            raise #RAGProcessingError("Failed to process query") from e
 
 

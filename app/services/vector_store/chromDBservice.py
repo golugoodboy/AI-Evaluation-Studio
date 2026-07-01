@@ -1,6 +1,6 @@
-from utils.logger import get_logger
+from app.utils.logger import get_logger
 import chromadb
-
+from typing import Dict, Any
 
 logger = get_logger(__name__)
 
@@ -19,7 +19,7 @@ class ChromaDBService:
                     "chunk_id" : chunk["chunk_id"],
                     "start_index" : chunk["start_index"],
                     "end_index" : chunk["end_index"],
-                    "document_id" : chunk["document_id"]
+                    "document_id" : document_id
                 } for chunk in chunks],
                 ids=[chunk["chunk_id"] for chunk in chunks]
             )
@@ -34,7 +34,7 @@ class ChromaDBService:
         """Search for similar documents based on query embeddings."""
         try:
             results = self.collection.query(
-                query_embeddings=[query_embeddings],
+                query_embeddings=query_embeddings,
                 n_results=top_k
             )
             return results
@@ -44,4 +44,3 @@ class ChromaDBService:
     
 
 
-        

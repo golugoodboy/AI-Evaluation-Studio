@@ -4,25 +4,32 @@ from app.models.api_response import APIResponse
 from app.models.api_response import RAGRequest
 from app.services.rag_service import RAGService
 from app.services.embeddings_services import EmbeddingsService
-from app.services.document_storage_service import DocumentStorageService
+#from app.services.document_storage_service import DocumentStorageService
 from app.services.llm.llm_service import LLMService
-from app.services.retriever_services import RetrieverService
 from app.services.llm.huggingface_provider import HuggingFaceProvider
+from app.services.retrieval_service.retrieverDBservice import RetrieverDBService
+from app.config.settings import settings
+import chromadb
+from app.services.vector_store.chromDBservice import ChromaDBService
+
 logger = get_logger(__name__)
 router = APIRouter(prefix="/rag", tags=["RAG"])
 
 
 embedding_service = EmbeddingsService()
 
-storage_service = DocumentStorageService()
+#storage_service = DocumentStorageService()
 
-retriever_service = RetrieverService()
+client = chromadb.PersistentClient(path=settings.base_dir / "data" / "chromadb")
+chromadb_service = ChromaDBService(client)
+retriever_service = RetrieverDBService(chromadb_service)
 
 provider = HuggingFaceProvider()
 
 llm_service = LLMService(provider)
 
-rag_service = RAGService(embedding_service,llm_service, retriever_service,storage_service)
+rag_service = RAGService(embedding_service,llm_service, retriever_service)
+
 
 @router.post("/")
 def rag(request : RAGRequest):
@@ -35,7 +42,8 @@ def rag(request : RAGRequest):
         return APIResponse(success=True, message="Query processed successfully", data=response)
     except Exception as e:
         logger.exception(f"Error processing query {request.query}")
-        return APIResponse(success=False, message=f"Failed to process the RAG: {str(e)} | Details: {error_details}", data=None)
+        return APIResponse(success=False, message = str(e), data = None)
     
+
 
 
