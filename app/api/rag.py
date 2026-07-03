@@ -11,6 +11,7 @@ from app.services.retrieval_service.retrieverDBservicev2 import RetrieverDBServi
 from app.config.settings import settings
 import chromadb
 from app.services.vector_store.chromDBservice import ChromaDBService
+from app.serializers.rag_response_formatter import RAGResponseFormatter
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/rag", tags=["RAG"])
@@ -39,7 +40,8 @@ def rag(request : RAGRequest):
             query=request.query, 
             document_id=request.document_id
         )
-        return APIResponse(success=True, message="Query processed successfully", data=response)
+        formatted_response = RAGResponseFormatter.format_rag_response_debug(response)
+        return APIResponse(success=True, message="Query processed successfully", data = formatted_response)
     except Exception as e:
         logger.exception(f"Error processing query {request.query}")
         return APIResponse(success=False, message = str(e), data = None)
