@@ -3,9 +3,9 @@ from app.services.embeddings_services import EmbeddingsService
 from app.services.llm.llm_service import LLMService
 from typing import Dict, Any
 from app.exceptions.pdf_exception import RAGProcessingError
-from prompt.rag_prompt import RAGPrompt
+from prompt.rag_promptv3 import RAGPrompt
 from app.config.settings import settings
-from app.services.retrieval_service.retrieverDBservice import RetrieverDBService
+from app.services.retrieval_service.retrieverDBservicev2 import RetrieverDBService
 
 
 
@@ -46,7 +46,7 @@ class RAGService:
                 "rag_context": rag_context,
                 "response": response,
                 "retrieval_count" : len(retrieved_chunks),
-                "top_score" : (retrieved_chunks[0]["distance"]) if retrieved_chunks else None,
+                "distance" : (retrieved_chunks[0]["distance"]) if retrieved_chunks else None,
                 "prompt_version": RAGPrompt.PROMPT_VERSION
             }
         except Exception as e:

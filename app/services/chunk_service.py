@@ -1,6 +1,7 @@
 from app.utils.logger import get_logger
 from uuid import uuid4
 from app.exceptions.pdf_exception import ChunkProcessingError
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 logger= get_logger(__name__)
 

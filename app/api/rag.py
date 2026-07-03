@@ -7,7 +7,7 @@ from app.services.embeddings_services import EmbeddingsService
 #from app.services.document_storage_service import DocumentStorageService
 from app.services.llm.llm_service import LLMService
 from app.services.llm.huggingface_provider import HuggingFaceProvider
-from app.services.retrieval_service.retrieverDBservice import RetrieverDBService
+from app.services.retrieval_service.retrieverDBservicev2 import RetrieverDBService
 from app.config.settings import settings
 import chromadb
 from app.services.vector_store.chromDBservice import ChromaDBService

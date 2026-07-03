@@ -44,7 +44,7 @@ class HuggingFaceProvider(BaseLLMProvider):
 
             return {
                 "text" : output_text,
-                "latency_ms" : latency,
+                "latency" : latency,
                 "model" : self._model_name,
                 "provider" : "HuggingFace",
                 "tokens_used" : total_tokens,

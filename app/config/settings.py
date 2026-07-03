@@ -30,6 +30,8 @@ class Settings:
             self.rag_threshold = float(self.rag_threshold)
         else:
             self.rag_threshold = 0.0
+        self.chunk_size = os.getenv("CHUNK_SIZE")
+        self.overlap = os.getenv("OVERLAP")
 
 
 settings = Settings()

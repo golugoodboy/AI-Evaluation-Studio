@@ -29,3 +29,9 @@ class RAGProcessingError(Exception):
 class DocumentStorageError(Exception):
     """Custom exception for Document Storage errors."""
     pass
+
+
+class RecursiveChunkProcessingError(Exception):
+    """Custom exception for Recursive Chunk processing errors."""
+    pass
+
