@@ -6,6 +6,7 @@ from app.exceptions.pdf_exception import RAGProcessingError
 from prompt.rag_promptv3 import RAGPrompt
 from app.config.settings import settings
 from app.services.retrieval_service.retrieverDBservicev2 import RetrieverDBService
+from app.services.evaluation.evaluation_service import EvaluationService
 
 
 
@@ -40,6 +41,7 @@ class RAGService:
             rag_context = "\n\n".join([chunk["text"] for chunk in retrieved_chunks])
             prompt = RAGPrompt.build(query, rag_context)
             response = self._llm_service.generate(prompt)
+            metrics = EvaluationService.generate_metrics(retrieved_chunks = retrieved_chunks, llm_response = response, prompt_version = RAGPrompt.PROMPT_VERSION)
             return {
                 "query": query,
                 "retrieved_chunks": retrieved_chunks,
@@ -47,10 +49,12 @@ class RAGService:
                 "response": response,
                 "retrieval_count" : len(retrieved_chunks),
                 "distance" : (retrieved_chunks[0]["distance"]) if retrieved_chunks else None,
-                "prompt_version": RAGPrompt.PROMPT_VERSION
+                "prompt_version": RAGPrompt.PROMPT_VERSION,
+                "metrics" : metrics
             }
         except Exception as e:
             logger.exception("Error processing query")
             raise #RAGProcessingError("Failed to process query") from e
+
 
 
