@@ -1,5 +1,5 @@
 from app.utils.logger import get_logger
-from typing import List, Dict
+from typing import Dict, Any, Optional
 from app.services.vector_store.chromDBservice import ChromaDBService
 from app.config.settings import settings
 
@@ -11,12 +11,13 @@ class RetrieverDBService:
         self.chromadb_service = chromadb_service
         self.threshold = threshold
     
-    def retrieve_chunks(self, query_embedding : list[float], top_k : int = 3) -> list[dict]:
+    def retrieve_chunks(self, query_embedding : list[float], top_k : int = 3, metadata_filter : Optional[Dict[str, Any]] = None) -> list[dict]:
         """Retrieve relevant chunks based on query embedding."""
         try:
             search_results = self.chromadb_service.search(
                 query_embeddings=query_embedding,
-                top_k = top_k
+                top_k = top_k,
+                metadata_filter = metadata_filter
             )
             filtered_items = [
             (doc, meta, id_, dist)

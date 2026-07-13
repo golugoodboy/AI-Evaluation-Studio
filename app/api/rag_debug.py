@@ -4,7 +4,6 @@ from app.models.api_response import APIResponse
 from app.models.api_response import RAGRequest
 from app.services.rag_service import RAGService
 from app.services.embeddings_services import EmbeddingsService
-#from app.services.document_storage_service import DocumentStorageService
 from app.services.llm.llm_service import LLMService
 from app.services.llm.huggingface_provider import HuggingFaceProvider
 from app.services.retrieval_service.retrieverDBservicev2 import RetrieverDBService
@@ -12,15 +11,13 @@ from app.config.settings import settings
 import chromadb
 from app.services.vector_store.chromDBservice import ChromaDBService
 from app.serializers.rag_response_formatter import RAGResponseFormatter
-from app.services.rag_servicev2 import RAGService
 
 logger = get_logger(__name__)
-router = APIRouter(prefix="/rag", tags=["RAG"])
+router = APIRouter(prefix="/rag_debug", tags=["RAG_Debug"])
 
 
 embedding_service = EmbeddingsService()
 
-#storage_service = DocumentStorageService()
 
 client = chromadb.PersistentClient(path=settings.base_dir / "data" / "chromadb")
 chromadb_service = ChromaDBService(client)
@@ -39,10 +36,9 @@ def rag(request : RAGRequest):
     try:
         response = rag_service.process_query(
             query=request.query, 
-            document_id=request.document_id,
-            metadata_filter = request.metadata_filter
+            document_id=request.document_id
         )
-        formatted_response = RAGResponseFormatter.format_rag_response_production(response)
+        formatted_response = RAGResponseFormatter.format_rag_response_debug(response)
         return APIResponse(success=True, message="Query processed successfully", data = formatted_response)
     except Exception as e:
         logger.exception(f"Error processing query {request.query}")

@@ -1,6 +1,6 @@
 from app.utils.logger import get_logger
 import chromadb
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 logger = get_logger(__name__)
 
@@ -30,17 +30,22 @@ class ChromaDBService:
             raise
 
     
-    def search(self, query_embeddings: list[float], top_k: int = 5) -> Dict[str, Any]:
+    def search(self, query_embeddings: list[float], top_k: int = 5, metadata_filter : Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Search for similar documents based on query embeddings."""
         try:
-            results = self.collection.query(
-                query_embeddings=query_embeddings,
-                n_results=top_k
-            )
+            query_params = {
+                "query_embeddings": query_embeddings,
+                "n_results": top_k,
+            }
+            if metadata_filter:
+                query_params["where"] = metadata_filter
+            results = self.collection.query(**query_params)
             return results
         except Exception as e:
             logger.exception(f"Error searching in ChromaDB: {e}")
             raise
     
+
+
 
 
