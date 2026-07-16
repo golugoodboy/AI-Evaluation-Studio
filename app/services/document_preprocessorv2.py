@@ -1,5 +1,5 @@
 from uuid import uuid4
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from app.services.pdf_service import PDFService
 from app.services.chunk_service_recursive import ChunkService
 from app.services.embeddings_services import EmbeddingsService

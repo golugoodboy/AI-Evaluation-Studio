@@ -33,6 +33,7 @@ class ChromaDBService:
     def search(self, query_embeddings: list[float], top_k: int = 5, metadata_filter : Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Search for similar documents based on query embeddings."""
         try:
+            
             query_params = {
                 "query_embeddings": query_embeddings,
                 "n_results": top_k,
